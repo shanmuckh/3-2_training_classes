@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Number Guesser</title>
+</head>
+<body style="text-align:center; font-family:sans-serif; padding:50px;">
+  <h1 style="margin:0 0 20px 0;">Number Guesser (1-100)</h1>
+  <p style="font-size:20px; margin:20px 0;">
+    Guess <span id="count" style="font-weight:bold; color:#007bff;">1</span>/10: 
+    <input type="number" id="guess" min="1" max="100" size="5" style="font-size:18px; padding:5px;">
+    <input type="button" id="submit" value="Guess" style="font-size:18px; padding:5px 10px; margin-left:10px;">
+  </p>
+  <p id="guesses" style="font-size:18px; font-weight:bold; margin:10px;"></p>
+  <p id="result" style="font-size:20px; font-weight:bold; margin:10px; min-height:25px;"></p>
+
+  <script>
+    let num = Math.floor(Math.random() * 100) + 1;
+    let count = 1;
+    const guess = document.getElementById('guess');
+    const submit = document.getElementById('submit');
+    const countEl = document.getElementById('count');
+    const guessesEl = document.getElementById('guesses');
+    const resultEl = document.getElementById('result');
+
+    submit.addEventListener('click', checkGuess);
+    guess.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') checkGuess();
+    });
+
+    guess.focus();
+
+    function checkGuess() {
+      let g = +guess.value;
+      if (!g || g < 1 || g > 100) {
+        alert('Enter a number 1-100');
+        return;
+      }
+      
+      guessesEl.innerHTML += (guessesEl.textContent ? ', ' : '') + g;
+      
+      if (g === num) {
+        resultEl.innerHTML = '🎉 Correct! It was ' + num;
+        resultEl.style.color = '#00b894';
+        gameOver();
+      } else if (count >= 10) {
+        resultEl.innerHTML = '💥 Game Over! It was ' + num;
+        resultEl.style.color = '#e17055';
+        gameOver();
+      } else {
+        resultEl.innerHTML = g < num ? '📈 Too low!' : '📉 Too high!';
+        resultEl.style.color = g < num ? '#fdcb6e' : '#fd79a8';
+        count++;
+        countEl.textContent = count;
+      }
+      
+      guess.value = '';
+      guess.focus();
+    }
+
+    function gameOver() {
+      guess.disabled = true;
+      submit.disabled = true;
+      let reset = document.createElement('input');
+      reset.type = 'button';
+      reset.value = 'New Game';
+      reset.style.fontSize = '18px';
+      reset.style.padding = '8px 16px';
+      reset.style.marginTop = '20px';
+      reset.onclick = resetGame;
+      document.body.appendChild(reset);
+    }
+
+    function resetGame() {
+      num = Math.floor(Math.random() * 100) + 1;
+      count = 1;
+      guess.disabled = false;
+      submit.disabled = false;
+      guessesEl.innerHTML = '';
+      resultEl.innerHTML = '';
+      resultEl.style.color = '';
+      countEl.textContent = '1';
+      guess.focus();
+      document.body.removeChild(document.body.lastChild);
+    }
+  </script>
+</body>
+</html>
+ 
